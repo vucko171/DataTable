@@ -1,0 +1,26 @@
+.search-result-heading,
+.footer,
+.SRHeading,
+.Header
+{
+    background-color: #0066cc;
+}
+
+.generic-top-banner
+{
+	margin:0;
+	padding:0;
+	border-bottom: 3px solid #0066cc;
+	background-color: #FFFFFF ;
+}
+.tableLink
+{
+	color: blue;
+
+}
+.tableLink:hover
+{
+	cursor: pointer;
+	color: red;
+	
+}
