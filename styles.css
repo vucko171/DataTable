@@ -4,7 +4,6 @@
 .Header
 {
     background-color: #0066cc;
-    color: #FFFFFF ;
 }
 
 .generic-top-banner
@@ -23,19 +22,5 @@
 {
 	cursor: pointer;
 	color: red;
-
+	
 }
-
-
-#datatable th, #datatable td {
-  padding: 0 5px 0 5px;
-}
-
-#datatable tr {
-  height: 20px;
-}
-
-#datatable tr:nth-child(even) {
-  background-color: #fff;
-}
-
