@@ -107,8 +107,10 @@ function DataTable({ tableStyle, data, columns }) {
                                             : parse(column.customCell, {
                                                 replace: function (domNode) {
                                                     if (domNode.type === "text" && domNode.data.indexOf("dataItem") !== -1) {
-                                                        let indB = [domNode.data.indexOf("{"), domNode.data.indexOf("}")]
-                                                        domNode.data = domNode.data.slice(0, indB[0]) + eval(domNode.data.slice(indB[0] + 1, indB[1])) + domNode.data.slice(indB[1] + 1)
+                                                        while (domNode.data.indexOf("{") !== -1) {
+                                                            let indB = [domNode.data.indexOf("{"), domNode.data.indexOf("}")]
+                                                            domNode.data = domNode.data.slice(0, indB[0]) + eval(domNode.data.slice(indB[0] + 1, indB[1])) + domNode.data.slice(indB[1] + 1)
+                                                        }
                                                     }
                                                     console.log(domNode);
                                                 }

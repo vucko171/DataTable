@@ -9,7 +9,7 @@ function Test() {
         {
             header: 'Copy',
             sortable: false,
-            customCell: '<div>{dataItem.SO_ID}</div>',
+            customCell: '<div>{dataItem.SO_ID}{dataItem.SO_ID}</div>',
             clickCallback: (state) => { console.log("this is a button"); console.log(state) },
             headerStyle: {
                 color: "purple",
