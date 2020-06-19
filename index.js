@@ -19,6 +19,7 @@ function DataTable({
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
+
     if (data.length !== 0) {
       console.log(data)
       setRows([...data])
@@ -85,26 +86,28 @@ function DataTable({
       <thead>
         <tr>
           {columns.map((column) => (
-            <th
-              key={column.header}
-              id={column.dataID}
-              className={customClassName}
-              width={column.width}
-              style={{ textAlign: column.align || 'left' }}
-              onClick={column.sortable ? onSort : () => { }}
-            >
-              <div title={column.helper || ''} style={{ ...headerStyle }}>
-                {column.header}
-                {column.sortable &&
-                  (sortOrder.indexOf(column.dataID) === -1 ? (
-                    <FaSort />
-                  ) : sortDirection[sortOrder.indexOf(column.dataID)] === 1 ? (
-                    <FaSortDown />
-                  ) : (
-                        <FaSortUp />
-                      ))}
-              </div>
-            </th>
+            (column.isVisible !== false ?
+              <th
+                key={column.header}
+                id={column.dataID}
+                className={customClassName}
+                width={column.width}
+                style={{ textAlign: column.align || 'left' }}
+                onClick={column.sortable ? onSort : () => { }}
+              >
+                <div title={column.helper || ''} style={{ ...headerStyle }}>
+                  {column.header}
+                  {column.sortable &&
+                    (sortOrder.indexOf(column.dataID) === -1 ? (
+                      <FaSort />
+                    ) : sortDirection[sortOrder.indexOf(column.dataID)] === 1 ? (
+                      <FaSortDown />
+                    ) : (
+                          <FaSortUp />
+                        ))}
+                </div>
+              </th>
+              : null)
           ))}
         </tr>
       </thead>
@@ -114,63 +117,65 @@ function DataTable({
             rows.map((dataItem, index) => (
               <tr key={index}>
                 {columns.map((column) => (
-                  <td
-                    key={column.header}
-                    style={{ textAlign: column.align || 'left' }}
-                  >
-                    <div
-                      style={
-                        { color: 'black', ...column.cellStyle } || {
-                          color: 'black',
-                        }
-                      }
+                  (column.isVisible !== false ?
+                    <td
+                      key={column.header}
+                      style={{ textAlign: column.align || 'left' }}
                     >
-                      <span
-                        className={column.isLink ? 'tableLink' : ''}
-                        onClick={
-                          column.clickCallback
-                            ? () => {
-                              column.clickCallback(dataItem);
-                            }
-                            : () => { }
+                      <div
+                        style={
+                          { color: 'black', ...column.cellStyle } || {
+                            color: 'black',
+                          }
                         }
                       >
-                        {column.dataID
-                          ? dataItem[column.dataID]
-                          : column.customCell
-                            ? column.customCell
-                            : parse(column.customCellString, {
-                              replace(domNode) {
-                                if (domNode.type === "tag") {
-                                  for (const key of Object.keys(domNode.attribs)) {
-                                    if (domNode.attribs[key].indexOf("{") !== -1) {
-                                      let indB = [domNode.attribs[key].indexOf("{"), domNode.attribs[key].indexOf("}")]
-                                      domNode.attribs[key] = domNode.attribs[key].slice(0, indB[0]) + eval(domNode.attribs[key].slice(indB[0] + 1, indB[1])) + domNode.attribs[key].slice(indB[1] + 1)
+                        <span
+                          className={column.isLink ? 'tableLink' : ''}
+                          onClick={
+                            column.clickCallback
+                              ? () => {
+                                column.clickCallback(dataItem);
+                              }
+                              : () => { }
+                          }
+                        >
+                          {column.dataID
+                            ? dataItem[column.dataID]
+                            : column.customCell
+                              ? column.customCell
+                              : parse(column.customCellString, {
+                                replace(domNode) {
+                                  if (domNode.type === "tag") {
+                                    for (const key of Object.keys(domNode.attribs)) {
+                                      if (domNode.attribs[key].indexOf("{") !== -1) {
+                                        let indB = [domNode.attribs[key].indexOf("{"), domNode.attribs[key].indexOf("}")]
+                                        domNode.attribs[key] = domNode.attribs[key].slice(0, indB[0]) + eval(domNode.attribs[key].slice(indB[0] + 1, indB[1])) + domNode.attribs[key].slice(indB[1] + 1)
+                                      }
                                     }
                                   }
-                                }
-                                if (
-                                  domNode.type === 'text' &&
-                                  domNode.data.indexOf('dataItem') !== -1
-                                ) {
-                                  while (domNode.data.indexOf('{') !== -1) {
-                                    const indB = [
-                                      domNode.data.indexOf('{'),
-                                      domNode.data.indexOf('}'),
-                                    ];
-                                    domNode.data =
-                                      domNode.data.slice(0, indB[0]) +
-                                      eval(
-                                        domNode.data.slice(indB[0] + 1, indB[1])
-                                      ) +
-                                      domNode.data.slice(indB[1] + 1);
+                                  if (
+                                    domNode.type === 'text' &&
+                                    domNode.data.indexOf('dataItem') !== -1
+                                  ) {
+                                    while (domNode.data.indexOf('{') !== -1) {
+                                      const indB = [
+                                        domNode.data.indexOf('{'),
+                                        domNode.data.indexOf('}'),
+                                      ];
+                                      domNode.data =
+                                        domNode.data.slice(0, indB[0]) +
+                                        eval(
+                                          domNode.data.slice(indB[0] + 1, indB[1])
+                                        ) +
+                                        domNode.data.slice(indB[1] + 1);
+                                    }
                                   }
-                                }
-                              },
-                            })}
-                      </span>
-                    </div>
-                  </td>
+                                },
+                              })}
+                        </span>
+                      </div>
+                    </td>
+                    : null)
                 ))}
               </tr>
             ))
@@ -199,6 +204,7 @@ DataTable.propTypes = {
       customCellString: PropTypes.string,
       helper: PropTypes.string,
       isLink: PropTypes.bool,
+      isVisible: PropTypes.bool,
       clickCallback: PropTypes.function,
     })
   ).isRequired,

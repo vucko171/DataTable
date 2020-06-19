@@ -37,6 +37,7 @@ function Test() {
       dataID: 'CUSTOMER_ID',
       sortable: true,
       width: '80px',
+      isVisible: false,
     },
     {
       header: 'Short Name',
