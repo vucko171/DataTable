@@ -1,25 +1,26 @@
-.search-result-heading,
-.footer,
-.SRHeading,
-.Header
+#datatable .search-result-heading,
+#datatable .footer,
+#datatable .SRHeading,
+#datatable .Header,
+#datatable .Title td
 {
     background-color: #0066cc;
     color: #FFFFFF ;
 }
 
-.generic-top-banner
+#datatable .generic-top-banner
 {
 	margin:0;
 	padding:0;
 	border-bottom: 3px solid #0066cc;
 	background-color: #FFFFFF ;
 }
-.tableLink
+#datatable .tableLink
 {
 	color: blue;
 
 }
-.tableLink:hover
+#datatable .tableLink:hover
 {
 	cursor: pointer;
 	color: red;

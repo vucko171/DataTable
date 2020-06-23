@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import parse from 'html-react-parser';
 import { FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
 import './styles.css';
-import spinner from "./images/spinner.gif"
+import spinner from './images/spinner.gif';
 
 function DataTable({
+  tableTitle,
   isLoading,
   tableStyle,
   headerStyle,
@@ -19,12 +20,11 @@ function DataTable({
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
-
     if (data.length !== 0) {
-      console.log(data)
-      setRows([...data])
+      console.log(data);
+      setRows([...data]);
     }
-  }, [data])
+  }, [data]);
 
   function onSort(event) {
     const tempRows = [...data];
@@ -73,120 +73,175 @@ function DataTable({
       setSortDirection([...tempDirection]);
     }
   }
-
   return (
-    <table
-      cellSpacing="0"
-      cellPadding="5px"
-      width="100%"
-      border="0"
-      style={tableStyle}
-      id="datatable"
+    <div
+      style={
+        JSON.stringify(tableStyle) ===
+        JSON.stringify({ backgroundColor: 'rgb(255,255,204)' })
+          ? { backgroundColor: 'Black', padding: '2px' }
+          : null
+      }
     >
-      <thead>
-        <tr>
-          {columns.map((column) => (
-            (column.isVisible !== false ?
-              <th
-                key={column.header}
-                id={column.dataID}
-                className={customClassName}
-                width={column.width}
-                style={{ textAlign: column.align || 'left' }}
-                onClick={column.sortable ? onSort : () => { }}
-              >
-                <div title={column.helper || ''} style={{ ...headerStyle }}>
-                  {column.header}
-                  {column.sortable &&
-                    (sortOrder.indexOf(column.dataID) === -1 ? (
-                      <FaSort />
-                    ) : sortDirection[sortOrder.indexOf(column.dataID)] === 1 ? (
-                      <FaSortDown />
-                    ) : (
-                          <FaSortUp />
-                        ))}
-                </div>
-              </th>
-              : null)
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {!isLoading ?
-          rows.length !== 0 ?
-            rows.map((dataItem, index) => (
-              <tr key={index}>
-                {columns.map((column) => (
-                  (column.isVisible !== false ?
-                    <td
-                      key={column.header}
-                      style={{ textAlign: column.align || 'left' }}
-                    >
-                      <div
-                        style={
-                          { color: 'black', ...column.cellStyle } || {
-                            color: 'black',
-                          }
-                        }
+      <table
+        cellSpacing="0"
+        cellPadding="0"
+        width="100%"
+        style={tableStyle}
+        id="datatable"
+      >
+        <thead>
+          {tableTitle ? (
+            <>
+              <tr className="Title">
+                <td colSpan="1000" style={{ padding: '2px' }}>
+                  <b>{tableTitle}</b>
+                </td>
+              </tr>
+              <tr style={{ height: 0 }} />
+            </>
+          ) : null}
+          <tr>
+            {columns.map((column) =>
+              column.isVisible !== false ? (
+                <th
+                  key={column.header}
+                  id={column.dataID}
+                  className={customClassName}
+                  width={column.width}
+                  style={{ textAlign: column.align || 'left' }}
+                  onClick={column.sortable ? onSort : () => {}}
+                >
+                  <div title={column.helper || ''} style={{ ...headerStyle }}>
+                    {column.header}
+                    {column.sortable &&
+                      (sortOrder.indexOf(column.dataID) === -1 ? (
+                        <FaSort />
+                      ) : sortDirection[sortOrder.indexOf(column.dataID)] ===
+                        1 ? (
+                        <FaSortDown />
+                      ) : (
+                        <FaSortUp />
+                      ))}
+                  </div>
+                </th>
+              ) : null
+            )}
+          </tr>
+        </thead>
+        <tbody>
+          {!isLoading ? (
+            rows.length !== 0 ? (
+              rows.map((dataItem, index) => (
+                <tr key={index}>
+                  {columns.map((column) =>
+                    column.isVisible !== false ? (
+                      <td
+                        key={column.header}
+                        style={{ textAlign: column.align || 'left' }}
                       >
-                        <span
-                          className={column.isLink ? 'tableLink' : ''}
-                          onClick={
-                            column.clickCallback
-                              ? () => {
-                                column.clickCallback(dataItem);
-                              }
-                              : () => { }
+                        <div
+                          style={
+                            { color: 'black', ...column.cellStyle } || {
+                              color: 'black',
+                            }
                           }
                         >
-                          {column.dataID
-                            ? dataItem[column.dataID]
-                            : column.customCell
+                          <span
+                            className={column.isLink ? 'tableLink' : ''}
+                            onClick={
+                              column.clickCallback
+                                ? () => {
+                                    column.clickCallback(dataItem);
+                                  }
+                                : () => {}
+                            }
+                          >
+                            {column.dataID
+                              ? dataItem[column.dataID]
+                              : column.customCell
                               ? column.customCell
                               : parse(column.customCellString, {
-                                replace(domNode) {
-                                  if (domNode.type === "tag") {
-                                    for (const key of Object.keys(domNode.attribs)) {
-                                      if (domNode.attribs[key].indexOf("{") !== -1) {
-                                        let indB = [domNode.attribs[key].indexOf("{"), domNode.attribs[key].indexOf("}")]
-                                        domNode.attribs[key] = domNode.attribs[key].slice(0, indB[0]) + eval(domNode.attribs[key].slice(indB[0] + 1, indB[1])) + domNode.attribs[key].slice(indB[1] + 1)
+                                  replace(domNode) {
+                                    if (domNode.type === 'tag') {
+                                      for (const key of Object.keys(
+                                        domNode.attribs
+                                      )) {
+                                        if (
+                                          domNode.attribs[key].indexOf('{') !==
+                                          -1
+                                        ) {
+                                          const indB = [
+                                            domNode.attribs[key].indexOf('{'),
+                                            domNode.attribs[key].indexOf('}'),
+                                          ];
+                                          domNode.attribs[key] =
+                                            domNode.attribs[key].slice(
+                                              0,
+                                              indB[0]
+                                            ) +
+                                            eval(
+                                              domNode.attribs[key].slice(
+                                                indB[0] + 1,
+                                                indB[1]
+                                              )
+                                            ) +
+                                            domNode.attribs[key].slice(
+                                              indB[1] + 1
+                                            );
+                                        }
                                       }
                                     }
-                                  }
-                                  if (
-                                    domNode.type === 'text' &&
-                                    domNode.data.indexOf('dataItem') !== -1
-                                  ) {
-                                    while (domNode.data.indexOf('{') !== -1) {
-                                      const indB = [
-                                        domNode.data.indexOf('{'),
-                                        domNode.data.indexOf('}'),
-                                      ];
-                                      domNode.data =
-                                        domNode.data.slice(0, indB[0]) +
-                                        eval(
-                                          domNode.data.slice(indB[0] + 1, indB[1])
-                                        ) +
-                                        domNode.data.slice(indB[1] + 1);
+                                    if (
+                                      domNode.type === 'text' &&
+                                      domNode.data.indexOf('dataItem') !== -1
+                                    ) {
+                                      while (domNode.data.indexOf('{') !== -1) {
+                                        const indB = [
+                                          domNode.data.indexOf('{'),
+                                          domNode.data.indexOf('}'),
+                                        ];
+                                        domNode.data =
+                                          domNode.data.slice(0, indB[0]) +
+                                          eval(
+                                            domNode.data.slice(
+                                              indB[0] + 1,
+                                              indB[1]
+                                            )
+                                          ) +
+                                          domNode.data.slice(indB[1] + 1);
+                                      }
                                     }
-                                  }
-                                },
-                              })}
-                        </span>
-                      </div>
-                    </td>
-                    : null)
-                ))}
+                                  },
+                                })}
+                          </span>
+                        </div>
+                      </td>
+                    ) : null
+                  )}
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="1000" style={{ textAlign: 'center' }}>
+                  {noDataMessage}
+                </td>
               </tr>
-            ))
-            : <tr><td colSpan="1000" style={{ textAlign: "center" }}>{noDataMessage}</td></tr>
-          : <tr><td colSpan="1000" style={{ textAlign: "center" }}><img src={spinner} style={{ width: "20px" }} /></td></tr>}
-      </tbody>
-    </table>
+            )
+          ) : (
+            <tr>
+              <td colSpan="1000" style={{ textAlign: 'center' }}>
+                <img src={spinner} style={{ width: '20px' }} />
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
 DataTable.propTypes = {
+  tableTitle: PropTypes.string,
   isLoading: PropTypes.bool,
   tableStyle: PropTypes.objectOf(PropTypes.string),
   headerStyle: PropTypes.objectOf(PropTypes.string),
@@ -213,11 +268,12 @@ DataTable.propTypes = {
 DataTable.defaultProps = {
   tableStyle: {
     backgroundColor: 'rgb(255,255,204)',
-    border: 'rgb(0,0,0) solid 2px',
   },
   headerStyle: {},
   customClassName: '',
   noDataMessage: 'No data',
+  tableTitle: undefined,
+  isLoading: false,
 };
 
 export default DataTable;
